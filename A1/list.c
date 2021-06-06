@@ -43,6 +43,14 @@ static void setup_node(){// setting up link list of unused nodes
 }
 
 static struct Node_s * allocate_new_node(){//return a node to be used (does not set the item)
+  if (n_free_head == n_free_tail){
+    struct Node_s * new = n_free_head;
+    n_free_head = NULL;
+    n_free_tail = NULL;
+    new->next_free = NULL;
+    num_nodes_used++;
+    return new;
+  }
   struct Node_s * new = n_free_head;
   n_free_head = n_free_head->next_free;
   new->next_free = NULL;
@@ -53,6 +61,18 @@ static struct Node_s * allocate_new_node(){//return a node to be used (does not 
 static void free_head(List * list){//freeing up the head pointer for later use (does not manage the list)
   if (list == NULL)
     return;
+  if (l_free_head == NULL){
+    list->next_free = NULL;
+    list->current = NULL;
+    list->head = NULL;
+    list-> tail = NULL;
+    list->count = 0;
+    l_free_head = list;
+    l_free_tail = list;
+    list = NULL;
+    num_heads_used--;
+    return;
+  }
   l_free_tail ->next_free = list;
   l_free_tail = list;
   l_free_tail->next_free = NULL;
@@ -67,6 +87,17 @@ static void free_head(List * list){//freeing up the head pointer for later use (
 static void free_node(Node * current){// freeing up the node for later use (does not manage the list)
   if (current == NULL)
     return;
+  if (n_free_head == NULL){
+    current->next_free = NULL;
+    current->prev = NULL;
+    current->next = NULL;
+    current->item = NULL;
+    n_free_head = current;
+    n_free_tail = current;
+    current = NULL;
+    num_nodes_used--;
+    return;
+  }
   n_free_tail ->next_free = current;
   n_free_tail = current;
   n_free_tail->next_free  = NULL;
@@ -89,7 +120,14 @@ List* List_create(){
     setup_node();
     num_List_create++;
   }
-
+  if (l_free_head == l_free_tail){// if there is only one head left
+    struct List_s * new = l_free_head;
+    l_free_head = NULL;
+    l_free_tail = NULL;
+    new->next_free = NULL;
+    num_heads_used++;
+    return new;
+  }
   //getting an unused head.
   struct List_s * new = l_free_head;
   l_free_head = l_free_head->next_free;
@@ -416,8 +454,7 @@ void List_free(List* pList, FREE_FN pItemFreeFn){
   struct Node_s * current = pList->head;
   while(current != NULL){
     current = current->next;
-    if (pList->head != NULL)
-      (*pItemFreeFn)(pList->head->item);
+    (*pItemFreeFn)(pList->head->item);
     free_node(pList->head);
     pList->head = current;
   }

@@ -49,6 +49,8 @@ static void myFree(void* item){
 static bool mycomp(void* pItem, void* pComparisonArg){
   return (*(int *)pItem == *(int *)pComparisonArg);
 }
+
+
 int main(){
 List* L1 = List_create();
 my_list_printf_function(L1);
@@ -143,13 +145,13 @@ ptr = (int *)malloc(sizeof(int));
 printf("inserting %d to list\n",9);
 List_insert(L1, ptr);
 my_list_printf_function(L1);
+printf("test\n");
 List_free(L1, myFree);
 printf("\n\n\n------------end of insert fuction test----------\n\n\n");
 L1 = List_create();
-for (int i = 0; i < 10; i++){
+for (int i = 0; i < 20; i++){
   ptr = (int *)malloc(sizeof(int));
   *ptr = i;
-
   List_append(L1, ptr);
   if (i < 5){
     printf("appending %d to list\n",i);
@@ -157,13 +159,12 @@ for (int i = 0; i < 10; i++){
   }
 
 }
-printf("appending %d nodes to list\n",10-5);
-
+printf("appending %d nodes to list\n",20-5);
 
 printf("\n\n\n------------end of appending fuction test----------\n\n\n");
 List_free(L1, myFree);
-printf("trimming %d nodes to list\n",10-5);
-for (int i = 10; i > 0; i--){
+printf("trimming %d nodes to list\n",20-5);
+for (int i = 20; i > 0; i--){
   free(List_trim(L1));
   if (i < 5){
     printf("trimming list\n");
@@ -181,7 +182,7 @@ for (int i = 0; i < 10; i++){
     my_list_printf_function(L1);
   }
 }
-printf("prepending %d nodes to list\n",10-5);
+printf("prepending %d nodes to list\n",20-5);
 printf("\n\n\n------------end of prepending fuction test----------\n\n\n");
 for (int i = 0; i < 5; i++){
   free(List_remove(L1));
@@ -225,7 +226,7 @@ for (int i = 0; i < 10; i++){
   *ptr = i;
   List_append(L1, ptr);
 }
-printf("appending 10 elements to list\n");
+printf("appending 20 elements to list\n");
 printf("L1:\n");
 my_list_printf_function(L1);
 printf("creating L2\n");
@@ -234,7 +235,6 @@ printf("concat(L1,L2)\n");
 List_concat(L1, L2);
 printf("L1:\n");
 my_list_printf_function(L1);
-
 printf("creating L2\n");
 L2 = List_create();
 
